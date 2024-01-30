@@ -1,4 +1,5 @@
 ﻿using FileUpload.Models;
+using Microsoft.EntityFrameworkCore;
 using System.IO;
 
 namespace FileUpload.Services
@@ -12,9 +13,35 @@ namespace FileUpload.Services
             _context.Database.EnsureCreated();
         }
 
-        public Task<MemoryStream> DownloadFileById(int fileName)
+        public async Task<MemoryStream> DownloadFileById(int fileName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var fajl = await _context.Files.FirstOrDefaultAsync(x => x.Id == fileName);
+                if (fajl == null)
+                {
+                    return null;
+                }
+                MemoryStream data = new MemoryStream(fajl.FileData);
+
+
+                return data;
+              
+            }
+            catch (Exception ex )
+            {
+
+                Console.Out.WriteLine("Hiba a fájl letöltésekor: "+ex.Message);
+                throw;
+            }
+        }
+
+        public async Task CopyStream(Stream s, string letoltesPath)
+        {
+           using (var fs = new FileStream(letoltesPath, FileMode.Create, FileAccess.Write))
+            {
+                await s.CopyToAsync(fs);
+            }
         }
 
         public async Task PostFileAsync(FileUploadModel kapottFileModel)

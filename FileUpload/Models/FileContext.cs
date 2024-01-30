@@ -9,16 +9,15 @@ namespace FileUpload.Models
         public FileContext(DbContextOptions<FileContext>options):base(options)
         {
         }
-        DbSet<FileModel> Files { get; set; }
+        protected readonly IConfiguration Configuration;
+
+        public DbSet<FileModel> Files { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(connStr, ServerVersion.AutoDetect(connStr));
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
+        
     }
 }

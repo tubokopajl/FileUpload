@@ -36,6 +36,10 @@ namespace FileUpload.Controllers
         [HttpPost("PostMultipleFile")]
         public async Task<IActionResult> PostMultipleFile([FromForm] List<FileUploadModel> kapottFileModels)
         {
+            if (kapottFileModels == null || kapottFileModels.Count == 0)
+            {
+                return BadRequest();
+            }
             try
             {
                 await _fileService.PostMultipleFileAsync(kapottFileModels);
@@ -44,6 +48,28 @@ namespace FileUpload.Controllers
             catch (Exception ex)
             {
                 Console.Out.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpGet("DownloadFile")]
+        public async Task<IActionResult> DownloadFileAsync(int id)
+        {
+           //check if exist
+           var fajl = await _fileService.DownloadFileById(id);
+            if (fajl == null)
+            {
+                return NotFound();
+              }
+            try
+            {
+                MemoryStream path = await _fileService.DownloadFileById(id);
+                return File(path, "text/plain", "file.txt");
+            }
+            catch (Exception )
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+
                 throw;
             }
         }
