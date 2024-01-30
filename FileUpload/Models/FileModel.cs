@@ -4,11 +4,11 @@
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string FileName { get; set; }
 
-        public byte[] Data { get; set; }
+        public byte[] FileData { get; set; }
 
-        public FileTypes Type { get; set; }
+        public FileTypes FileType { get; set; }
 
 
     }

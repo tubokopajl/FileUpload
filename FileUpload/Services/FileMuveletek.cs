@@ -24,14 +24,14 @@ namespace FileUpload.Services
                 //új fájl létrehozása és feltöltése
                 FileModel ujFajl = new FileModel
                 {
-                    Name= kapottFileModel.File.FileName,
-                    Type= kapottFileModel.FileType
+                    FileName = kapottFileModel.FileDetails.FileName,
+                    FileType = kapottFileModel.FileType
 
                 };
                 using (var memoryStream = new MemoryStream())
                 {
-                    kapottFileModel.File.CopyTo(memoryStream);
-                    ujFajl.Data=memoryStream.ToArray();
+                    kapottFileModel.FileDetails.CopyTo(memoryStream);
+                    ujFajl.FileData = memoryStream.ToArray();
                 }
                 var result = _context.Add(ujFajl);
                 await _context.SaveChangesAsync();
@@ -44,33 +44,29 @@ namespace FileUpload.Services
             }
         }
 
-        public async Task PostMultipleFileAsync(List<FileUploadModel> kapottFileModels)
+        public async Task PostMultipleFileAsync(List<FileUploadModel> fileLista)
         {
-            foreach (var kapottFileModel in kapottFileModels)
+            try
             {
-                try
+                foreach(FileUploadModel f in fileLista)
                 {
-                    // Create and upload a new file
-                    FileModel ujFajl = new FileModel
-                    {
-                        Name = kapottFileModel.File.FileName,
-                        Type = kapottFileModel.FileType
-                    };
+                    FileModel ujFajl= new FileModel { FileName = f.FileDetails.FileName, FileType = f.FileType };
                     using (var memoryStream = new MemoryStream())
                     {
-                        kapottFileModel.File.CopyTo(memoryStream);
-                        ujFajl.Data = memoryStream.ToArray();
+                        f.FileDetails.CopyTo(memoryStream);
+                        ujFajl.FileData = memoryStream.ToArray();
                     }
                     var result = _context.Add(ujFajl);
-                }
-                catch (Exception)
-                {
-                    Console.Out.WriteLine("Hiba a fájl feltöltésekor");
-                    throw;
-                }
+                    
             }
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex )
+            {
+                await Console.Out.WriteLineAsync("Hiba a fájl feltöltésekor " + ex.Message);
+                throw;
+            }
+           
         }
-
     }
 }

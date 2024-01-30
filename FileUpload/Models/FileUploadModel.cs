@@ -2,7 +2,7 @@
 {
     public class FileUploadModel
     {
-        public IFormFile File { get; set; }
+        public IFormFile FileDetails { get; set; }
 
         public FileTypes FileType { get; set; }
 
